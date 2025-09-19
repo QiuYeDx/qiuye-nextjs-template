@@ -104,9 +104,26 @@ pnpm build
 # 启动生产服务器
 pnpm start
 
+# 静态文件服务（用于静态导出）
+pnpm serve
+
 # 代码检查
 pnpm lint
 ```
+
+### 静态导出模式
+
+如果在 `next.config.ts` 中配置了 `output: 'export'`，则不能使用 `pnpm start`，应该按以下步骤操作：
+
+```bash
+# 1. 构建静态文件
+pnpm build
+
+# 2. 启动静态文件服务器
+pnpm serve
+```
+
+> **注意**: 静态导出模式会将应用构建为纯静态文件，输出到 `out` 目录，适用于静态托管服务如 GitHub Pages、Netlify 等。
 
 ## 📁 项目结构
 
@@ -163,6 +180,36 @@ qiuye-nextjs-template/
 最简单的部署方式是使用 [Vercel 平台](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)：
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/qiuye-nextjs-template)
+
+### 静态导出部署
+
+如果需要部署到静态托管服务（如 GitHub Pages、Netlify 静态托管等），可以使用静态导出模式：
+
+1. **配置静态导出**
+
+   在 `next.config.ts` 中添加：
+
+   ```typescript
+   const nextConfig: NextConfig = {
+     output: 'export',
+     trailingSlash: true,
+     images: {
+       unoptimized: true
+     }
+   };
+   ```
+
+2. **构建和部署**
+
+   ```bash
+   # 构建静态文件
+   pnpm build
+   
+   # 本地预览（可选）
+   pnpm serve
+   
+   # 部署 out 目录到静态托管服务
+   ```
 
 ### 其他部署选项
 
