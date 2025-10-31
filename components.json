@@ -18,5 +18,7 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
-  "registries": {}
+  "registries": {
+    "@qiuye-ui": "https://ui.qiuyedx.com/registry/{name}.json"
+  }
 }
