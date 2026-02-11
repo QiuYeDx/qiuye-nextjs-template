@@ -3,9 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
-import { AppSidebar } from "@/components/app-sidebar";
 import { Header } from "@/components/header";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { Footer } from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,8 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "秋夜 Next.js 模板",
-  description: "基于 Next.js 15 构建的现代化模板，包含完整的 UI 组件库和最佳实践",
+  title: "qiuye-nextjs-template",
+  description:
+    "基于 Next.js 15 + React 19 + TypeScript + Tailwind CSS 4 的现代化项目模板，开箱即用",
 };
 
 export default function RootLayout({
@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <ThemeProvider
           attribute="class"
@@ -38,15 +38,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-              <Header />
-              <main className="flex-1 overflow-hidden">
-                {children}
-              </main>
-            </SidebarInset>
-          </SidebarProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

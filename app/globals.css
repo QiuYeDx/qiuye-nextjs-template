@@ -112,6 +112,27 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+/*
+ * 覆盖 react-remove-scroll-bar 在 Dialog/Sheet 等弹窗打开时注入到 body 的样式。
+ *
+ * react-remove-scroll-bar v2.3.x 注入规则的选择器为 body[data-scroll-locked]，
+ * 特异性 0-1-1，且使用了 !important。
+ *
+ * 用 html > body[data-scroll-locked]（特异性 0-1-2）+ !important 来覆盖，
+ * 防止 overflow:hidden 破坏 sticky 定位、防止 margin/padding 补偿导致宽度突变。
+ * 背景滚动仍由 react-remove-scroll 的事件级拦截（wheel/touchmove）来阻止。
+ */
+html > body[data-scroll-locked] {
+  overflow: visible !important;
+  margin-right: 0px !important;
+  padding-right: 0px !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
