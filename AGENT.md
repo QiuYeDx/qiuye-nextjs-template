@@ -1,616 +1,146 @@
-# 🤖 AI Agent 开发指南
+# AI Agent 开发指南
 
-> 本文档专为 AI 大模型/代理提供项目开发指导，包含技术架构、代码规范、开发模式等详细信息。
+本文件用于约束 AI Agent 在本仓库内的开发行为。本仓库是一个纯净的 Next.js 启动模板，不是业务系统或某个特定领域的 starter kit。
 
-## 📋 项目概览
+## 项目定位
 
-### 基本信息
+- 项目名称：Qiuye Next.js Template
+- 目标：作为创建任意新 Next.js 项目的初始化脚手架代码来源。
+- 核心技术栈：Next.js 15、React 19、TypeScript 5、Tailwind CSS 4、shadcn/ui、Radix UI、next-themes、lucide-react、Motion、pnpm。
+- 默认能力：基础 App Router、主题系统、少量通用 UI、基础 Header/Footer、模板首页和 About 示例。
 
-- **项目名称**: 秋夜 Next.js 模板 (Qiuye Next.js Template)
-- **技术栈**: Next.js 15 + React 19 + TypeScript + Tailwind CSS 4
-- **UI 框架**: shadcn/ui + Radix UI
-- **包管理器**: pnpm (推荐)
-- **构建工具**: Turbopack
-- **环境要求**: Node.js >= 20 (shadcn/ui 要求), 开发需 >= 18
-- **主要特性**: SSR/SSG、主题切换、响应式设计、动画效果
+## 最高优先级规则
 
-### 目录结构
+- 保持模板纯净。不要默认加入博客、文档站、图库、后台、CMS、认证、数据库、评论、统计、上传、支付、地图、图表、Markdown、MDX、3D 或 Canvas 特效。
+- 新增依赖前，必须确认默认模板代码会直接使用它。否则写入 README 的可选推荐，不要放进 `package.json`。
+- `components/ui/` 只能放 shadcn/ui 组件，不放自研组件和业务组件。
+- `components/qiuye-ui/` 只能放通用、轻量、无业务语义的 qiuye-ui 组件。
+- 默认使用 Server Component。只有需要 hooks、浏览器 API、主题运行态、动画交互时才使用 `"use client"`。
+- 不复制 `/Users/qiuyedx/Documents/Github/qiuyedx-blog` 中的业务文件、个人内容、视觉特效、Markdown 系统、Reference Gallery、OSS 能力或 API。
+- 回答结束前必须关闭本轮启动的前端服务进程。
+
+## 目录职责
 
 ```text
-qiuye-nextjs-template/
-├── app/                    # Next.js App Router
-│   ├── globals.css        # 全局样式和 Tailwind 配置
-│   ├── layout.tsx         # 根布局组件
-│   └── page.tsx           # 主页面组件
-├── components/            # React 组件库
-│   ├── ui/               # shadcn/ui 基础组件
-│   ├── app-sidebar.tsx   # 应用侧边栏
-│   ├── header.tsx        # 头部导航
-│   ├── theme-provider.tsx # 主题上下文提供者
-│   └── theme-toggle.tsx  # 主题切换组件
-├── hooks/                # 自定义 React Hooks
-├── lib/                  # 工具函数和配置
-├── public/               # 静态资源
-└── 配置文件...
+app/                  Next.js App Router 页面和布局
+components/ui/        shadcn/ui 基础组件
+components/qiuye-ui/  通用 qiuye-ui 组件
+components/           当前阶段的通用布局和主题组件
+hooks/                通用 React hooks
+lib/                  通用工具函数
+public/               静态资源
+docs/开发设计文档/    大功能设计、执行计划和实施记录
 ```
 
-## 🏗️ 技术架构
+后续现代化工作完成后，推荐形成：
 
-### Next.js App Router 架构
-
-- **路由系统**: 基于文件系统的 App Router
-- **渲染模式**: 支持 SSR、SSG、ISR 和客户端渲染
-- **数据获取**: 使用 Server Components 和 Server Actions
-- **布局系统**: 嵌套布局和模板系统
-
-### 组件架构
-
-```typescript
-// 组件层次结构
-RootLayout (app/layout.tsx)
-├── ThemeProvider (全局主题)
-├── Header (导航头部)
-├── Sidebar (侧边栏)
-└── Page Content (页面内容)
-    ├── UI Components (shadcn/ui)
-    └── Custom Components (自定义组件)
+```text
+components/layout/     SiteHeader、SiteFooter 等通用布局
+components/providers/  AppProviders 等全局 Provider 组合
+config/                siteConfig 等模板级配置
 ```
 
-### 状态管理
+不要在没有明确需求时创建 `content/`、`features/`、`server/`、`db/`、`scripts/` 等业务目录。
 
-- **全局状态**: Zustand (轻量级状态管理)
-- **主题状态**: next-themes (主题切换)
-- **表单状态**: React Hook Form (表单处理)
-- **服务器状态**: React Query/SWR (数据同步)
+## 组件规则
 
-### 样式系统
+- shadcn/ui 组件保持原子、可替换、无业务语义。
+- 自研组件不要放入 `components/ui/`。
+- 页面级业务组合优先放到对应业务目录；本模板默认不应新增业务组合。
+- 图标优先使用 `lucide-react`。
+- Button 内部图标和文字之间不要手写 `mr-2` / `ml-2`，优先使用组件已有 gap 或父级 gap。
+- UI 文案保持通用，不写个人品牌、博客栏目、摄影、AI 内容站等领域文案。
 
-```css
-/* Tailwind CSS 配置层次 */
-1. Base Layer (基础样式)
-2. Components Layer (组件样式)
-3. Utilities Layer (工具类)
-4. CSS Variables (主题变量)
+## Next.js 规则
+
+- `app/layout.tsx` 保持薄，只负责字体、metadata、全局 CSS、Provider 和基础 Shell 组合。
+- 不在 Client Component 中 import `fs`、`path`、服务端 SDK、私密环境变量或其他服务端专用能力。
+- 不在 `next.config.ts` 默认加入远程图片通配域名、静态导出、serverExternalPackages 或个人局域网 allowedDevOrigins。
+- 静态导出、远程图片、分析、服务端包等配置应作为 README 片段，由具体项目按需添加。
+
+## 样式规则
+
+- Tailwind CSS 4 使用 CSS-first 配置。
+- 全局主题变量集中在 `app/globals.css`。
+- 保留 shadcn/ui token、dark variant、View Transition 主题切换样式和 Dialog/Sheet 滚动锁修复。
+- 不加入 QiuVision 个人站品牌色、大型 keyframes、复杂视觉背景或页面特效。
+- 保持页面示例易删除、易替换、无强视觉绑定。
+
+## 依赖规则
+
+默认保留依赖应服务于模板基础能力，例如：
+
+- Next.js / React / TypeScript
+- Tailwind CSS / PostCSS
+- shadcn/ui 所需 Radix 包
+- `next-themes`
+- `lucide-react`
+- `motion`
+- `sonner`
+- `vaul`
+- `clsx`
+- `tailwind-merge`
+- `class-variance-authority`
+
+以下能力不要默认加入模板依赖：
+
+- Markdown / MDX：`react-markdown`、`remark-gfm`、`rehype-raw`、`mdx`
+- 内容解析：`gray-matter`
+- 代码块和图表：`prism-react-renderer`、`mermaid`
+- OSS / 图片处理：`ali-oss`、`sharp`
+- 3D：`three`、`@react-three/*`
+- 评论和统计：`twikoo`、`@vercel/analytics`、`@vercel/speed-insights`
+- 认证、数据库、支付、CMS 相关包
+
+如果用户明确要某类能力，再按项目需求添加。
+
+## 文档工作流
+
+中大型需求使用：
+
+```text
+docs/开发设计文档/
+  <feature_slug>_final_design.md
+  <feature_slug>_execution_plan.md
+  <feature_slug>_implementation_records/
 ```
 
-## 🎨 UI 组件系统
+当前现代化工作文档：
 
-### shadcn/ui 组件分类
-
-#### 布局组件
-
-- `Card`: 内容容器，支持 header/content/footer
-- `Sheet`: 侧边抽屉，可配置方向和大小
-- `Sidebar`: 导航侧边栏，可折叠
-- `Resizable`: 可调整大小的面板
-
-#### 表单组件
-
-```typescript
-// 表单组件使用模式
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-
-// 标准表单结构
-<form>
-  <div className="space-y-4">
-    <div className="space-y-2">
-      <Label htmlFor="email">邮箱</Label>
-      <Input id="email" type="email" placeholder="输入邮箱" />
-    </div>
-    <Button type="submit">提交</Button>
-  </div>
-</form>
+```text
+docs/开发设计文档/20260628_nextjs_template_modernization/
 ```
 
-#### 反馈组件
+实现每个工作包前：
 
-- `Alert Dialog`: 确认对话框
-- `Toast`: 消息提示 (使用 sonner)
-- `Progress`: 进度条
-- `Skeleton`: 加载骨架屏
+1. 阅读 final design。
+2. 阅读 execution plan。
+3. 查看进度台账。
+4. 只认领一个最小工作包。
+5. 完成后更新台账并写实施记录。
 
-#### 导航组件
+## 验证规则
 
-- `Navigation Menu`: 主导航菜单
-- `Breadcrumb`: 面包屑导航
-- `Pagination`: 分页组件
-- `Tabs`: 标签页切换
-
-### 组件使用规范
-
-#### 1. 导入规范
-
-```typescript
-// ✅ 正确的导入方式
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-// ❌ 避免的导入方式
-import Button from "@/components/ui/button"
-```
-
-#### 2. 类名组合
-
-```typescript
-// 使用 cn 工具函数组合类名
-import { cn } from "@/lib/utils"
-
-<Button 
-  className={cn(
-    "base-classes",
-    variant === "primary" && "primary-classes",
-    size === "large" && "large-classes",
-    className
-  )}
->
-  按钮文本
-</Button>
-```
-
-#### 3. 类型安全
-
-```typescript
-// 组件 Props 类型定义
-interface ComponentProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "destructive" | "outline"
-  size?: "default" | "sm" | "lg"
-  children: React.ReactNode
-}
-```
-
-## 🎯 开发模式和最佳实践
-
-### 1. 服务器组件 vs 客户端组件
-
-#### 服务器组件 (默认)
-
-```typescript
-// app/page.tsx - 服务器组件
-import { getData } from "@/lib/api"
-
-export default async function Page() {
-  const data = await getData() // 在服务器端获取数据
-  
-  return (
-    <div>
-      <h1>服务器渲染内容</h1>
-      <p>{data.content}</p>
-    </div>
-  )
-}
-```
-
-#### 客户端组件
-
-```typescript
-// components/interactive-component.tsx
-"use client" // 客户端组件标识
-
-import { useState } from "react"
-
-export function InteractiveComponent() {
-  const [count, setCount] = useState(0)
-  
-  return (
-    <button onClick={() => setCount(c => c + 1)}>
-      点击次数: {count}
-    </button>
-  )
-}
-```
-
-### 2. 布局和模板模式
-
-#### 根布局
-
-```typescript
-// app/layout.tsx
-import { ThemeProvider } from "@/components/theme-provider"
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang="zh-CN" suppressHydrationWarning>
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
-  )
-}
-```
-
-#### 嵌套布局
-
-```typescript
-// app/dashboard/layout.tsx
-import { Sidebar } from "@/components/sidebar"
-
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <main className="flex-1 overflow-auto">
-        {children}
-      </main>
-    </div>
-  )
-}
-```
-
-### 3. 数据获取模式
-
-#### 服务器端数据获取
-
-```typescript
-// 在服务器组件中
-async function getData() {
-  const res = await fetch('https://api.example.com/data', {
-    cache: 'force-cache', // 缓存策略
-  })
-  
-  if (!res.ok) {
-    throw new Error('获取数据失败')
-  }
-  
-  return res.json()
-}
-
-export default async function Page() {
-  const data = await getData()
-  return <div>{data.title}</div>
-}
-```
-
-#### 客户端数据获取
-
-```typescript
-"use client"
-
-import { useState, useEffect } from "react"
-
-export function ClientComponent() {
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  
-  useEffect(() => {
-    fetch('/api/data')
-      .then(res => res.json())
-      .then(data => {
-        setData(data)
-        setLoading(false)
-      })
-  }, [])
-  
-  if (loading) return <div>加载中...</div>
-  return <div>{data?.title}</div>
-}
-```
-
-### 4. 样式和主题模式
-
-#### CSS 变量主题系统
-
-```css
-/* app/globals.css */
-:root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --primary: 222.2 47.4% 11.2%;
-  --primary-foreground: 210 40% 98%;
-}
-
-.dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --primary: 210 40% 98%;
-  --primary-foreground: 222.2 47.4% 11.2%;
-}
-```
-
-#### 主题切换组件
-
-```typescript
-// components/theme-toggle.tsx
-"use client"
-
-import { useTheme } from "next-themes"
-import { Button } from "@/components/ui/button"
-
-export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
-  
-  return (
-    <Button
-      variant="outline"
-      size="icon"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-    >
-      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-    </Button>
-  )
-}
-```
-
-### 5. 动画和交互模式
-
-#### Motion 动画
-
-```typescript
-import { motion } from "motion/react"
-
-export function AnimatedComponent() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      whileHover={{ 
-        scale: 1.05,
-        transition: { duration: 0.2 }
-      }}
-    >
-      动画内容
-    </motion.div>
-  )
-}
-```
-
-#### 滚动触发动画
-
-```typescript
-import { motion, useInView } from "motion/react"
-import { useRef } from "react"
-
-export function ScrollTriggeredAnimation() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
-  
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-    >
-      滚动触发的动画内容
-    </motion.div>
-  )
-}
-```
-
-## 🔧 常见开发任务
-
-### 1. 创建新页面
+常规验证：
 
 ```bash
-# 创建新页面
-touch app/about/page.tsx
-
-# 创建带布局的页面组
-mkdir app/dashboard
-touch app/dashboard/layout.tsx
-touch app/dashboard/page.tsx
-```
-
-### 2. 添加新组件
-
-```typescript
-// components/custom-component.tsx
-interface CustomComponentProps {
-  title: string
-  children: React.ReactNode
-  className?: string
-}
-
-export function CustomComponent({
-  title,
-  children,
-  className
-}: CustomComponentProps) {
-  return (
-    <div className={cn("default-classes", className)}>
-      <h2>{title}</h2>
-      {children}
-    </div>
-  )
-}
-```
-
-### 3. 集成新的 shadcn/ui 组件
-
-```bash
-# 添加新组件
-pnpm dlx shadcn@latest add dialog
-pnpm dlx shadcn@latest add form
-pnpm dlx shadcn@latest add data-table
-```
-
-### 4. 创建 API 路由
-
-```typescript
-// app/api/users/route.ts
-import { NextRequest, NextResponse } from "next/server"
-
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams
-  const id = searchParams.get('id')
-  
-  // 处理逻辑
-  
-  return NextResponse.json({ data: "用户数据" })
-}
-
-export async function POST(request: NextRequest) {
-  const body = await request.json()
-  
-  // 处理 POST 请求
-  
-  return NextResponse.json({ success: true })
-}
-```
-
-### 5. 状态管理设置
-
-```typescript
-// lib/store.ts
-import { create } from 'zustand'
-
-interface AppState {
-  count: number
-  increment: () => void
-  decrement: () => void
-}
-
-export const useAppStore = create<AppState>((set) => ({
-  count: 0,
-  increment: () => set((state) => ({ count: state.count + 1 })),
-  decrement: () => set((state) => ({ count: state.count - 1 })),
-}))
-```
-
-## 🚨 故障排除和调试
-
-### 常见问题和解决方案
-
-#### 1. 主题闪烁问题
-
-```typescript
-// 确保在 html 标签添加 suppressHydrationWarning
-<html lang="zh-CN" suppressHydrationWarning>
-```
-
-#### 2. 客户端/服务器组件混用错误
-
-```typescript
-// ❌ 错误：在服务器组件中使用客户端 hooks
-export default function ServerComponent() {
-  const [state, setState] = useState(0) // 错误！
-  return <div>{state}</div>
-}
-
-// ✅ 正确：分离客户端逻辑
-export default function ServerComponent() {
-  return (
-    <div>
-      <ClientComponent /> {/* 客户端组件处理状态 */}
-    </div>
-  )
-}
-```
-
-#### 3. CSS 样式优先级问题
-
-```typescript
-// 使用 cn 工具函数确保类名正确合并
-import { cn } from "@/lib/utils"
-
-<div className={cn(
-  "base-styles",
-  "override-styles", // 后面的类名会覆盖前面的
-  conditionalClass && "conditional-styles"
-)}>
-```
-
-#### 4. TypeScript 类型错误
-
-```typescript
-// 扩展组件 props 类型
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary"
-  size?: "sm" | "md" | "lg"
-}
-
-// 使用泛型约束
-interface GenericComponentProps<T> {
-  data: T[]
-  renderItem: (item: T) => React.ReactNode
-}
-```
-
-### 开发调试工具
-
-#### 1. React DevTools
-
-- 安装 React DevTools 浏览器扩展
-- 查看组件树和 props
-- 调试 hooks 状态
-
-#### 2. Next.js 开发工具
-
-```typescript
-// next.config.ts
-const nextConfig = {
-  experimental: {
-    turbopack: true, // 开启 Turbopack
-  },
-  logging: {
-    fetches: {
-      fullUrl: true, // 显示完整的请求 URL
-    },
-  },
-}
-```
-
-#### 3. Tailwind CSS 调试
-
-```bash
-# 安装 Tailwind CSS IntelliSense
-# VS Code 扩展：bradlc.vscode-tailwindcss
-```
-
-## 📚 开发资源和参考
-
-### 官方文档
-
-- [Next.js 15 文档](https://nextjs.org/docs)
-- [React 19 文档](https://react.dev/)
-- [Tailwind CSS 4 文档](https://tailwindcss.com/docs)
-- [shadcn/ui 文档](https://ui.shadcn.com/)
-
-### 关键配置文件
-
-- `next.config.ts`: Next.js 配置
-- `tailwind.config.js`: Tailwind CSS 配置
-- `components.json`: shadcn/ui 配置
-- `tsconfig.json`: TypeScript 配置
-- `eslint.config.mjs`: ESLint 配置
-
-### 开发命令
-
-```bash
-# 开发服务器
-pnpm dev
-
-# 构建生产版本
-pnpm build
-
-# 启动生产服务器
-pnpm start
-
-# 代码检查
 pnpm lint
-
-# 添加 shadcn/ui 组件
-pnpm dlx shadcn@latest add [component-name]
+pnpm build
 ```
 
----
+如需视觉检查可运行：
 
-*本文档为 AI 助手提供项目开发指导，定期更新以反映最新的开发实践和项目结构变化。*
+```bash
+pnpm dev
+```
+
+但结束前必须关闭本轮启动的前端服务进程。
+
+## 禁止事项
+
+- 禁止把模板改成博客、内容站、图库、后台或品牌官网。
+- 禁止默认添加 Markdown 渲染器、文章系统、Reference Gallery、OSS、评论、Analytics。
+- 禁止把未使用依赖留在模板里当“以后可能用”。
+- 禁止把业务组件放入 `components/ui/`。
+- 禁止复制其他项目的私有配置、个人信息、token、bucket、社交账号或内容素材。
+- 禁止在未验证引用的情况下删除组件或依赖。

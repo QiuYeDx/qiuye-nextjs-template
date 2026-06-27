@@ -41,8 +41,8 @@
 | 工作包 | 状态 | 完成日期 | 关键变更文件 | 验证 | 实施记录 | Open issues |
 |---|---|---:|---|---|---|---|
 | DOC-00 最终设计定稿 | 已完成 | 2026-06-28 | `docs/开发设计文档/20260628_nextjs_template_modernization/nextjs_template_modernization_final_design.md` | 人工检查文档方向：纯净模板、排除 Markdown/图库/OSS 等领域能力 | 无，设计阶段记录在文档本身 | 无 |
-| DOC-01 README 与 AGENT 定位更新 | 未开始 | - | `README.md`, `AGENT.md` | `pnpm lint` | `docs/开发设计文档/20260628_nextjs_template_modernization/nextjs_template_modernization_implementation_records/YYYY-MM-DD_DOC-01_docs-positioning.md` | README 需要保留哪些“可选推荐库”由实现时依赖审计确认 |
-| SHELL-01 配置层与 App Shell 轻量整理 | 未开始 | - | `config/site.ts`, `app/layout.tsx`, `components/providers/app-providers.tsx`, `components/layout/site-header.tsx`, `components/layout/site-footer.tsx`, 可能删除或兼容 `components/header.tsx`, `components/footer.tsx` | `pnpm lint`, `pnpm build` | `docs/开发设计文档/20260628_nextjs_template_modernization/nextjs_template_modernization_implementation_records/YYYY-MM-DD_SHELL-01_app-shell.md` | 是否保留旧 `components/header.tsx` / `footer.tsx` 作为 re-export 由实现时决定 |
+| DOC-01 README 与 AGENT 定位更新 | 已完成 | 2026-06-28 | `README.md`, `AGENT.md` | `pnpm lint` 因 pnpm 11 与 lockfile v6/非 TTY 兼容问题未进入 ESLint；改用 `./node_modules/.bin/eslint` 通过 | `docs/开发设计文档/20260628_nextjs_template_modernization/nextjs_template_modernization_implementation_records/2026-06-28_DOC-01_docs-positioning.md` | 后续 QA 或 DEPS 包需处理 pnpm 运行器/lockfile 兼容问题 |
+| SHELL-01 配置层与 App Shell 轻量整理 | 已完成 | 2026-06-28 | `config/site.ts`, `app/layout.tsx`, `components/providers/app-providers.tsx`, `components/layout/site-header.tsx`, `components/layout/site-footer.tsx`, `components/header.tsx`, `components/footer.tsx` | `./node_modules/.bin/eslint` 通过；`./node_modules/.bin/next build --turbopack` 提权后通过 | `docs/开发设计文档/20260628_nextjs_template_modernization/nextjs_template_modernization_implementation_records/2026-06-28_SHELL-01_app-shell.md` | 旧 `components/header.tsx` / `footer.tsx` 保留为兼容 re-export，后续 UI 收缩包再决定是否删除 |
 | HOME-01 首页纯净化 | 未开始 | - | `app/page.tsx`, 可选 `components/qiuye-ui/copy-button.tsx` | `pnpm lint`, `pnpm build` | `docs/开发设计文档/20260628_nextjs_template_modernization/nextjs_template_modernization_implementation_records/YYYY-MM-DD_HOME-01_clean-home.md` | 首页是否继续使用 Motion 需按最终代码体量判断 |
 | ABOUT-01 About 示例页纯净化 | 未开始 | - | `app/about/page.tsx` | `pnpm lint`, `pnpm build` | `docs/开发设计文档/20260628_nextjs_template_modernization/nextjs_template_modernization_implementation_records/YYYY-MM-DD_ABOUT-01_clean-about.md` | 可与 HOME-01 同会话实现，但台账需分开更新 |
 | UI-01 组件引用审计与基线确认 | 未开始 | - | `components/ui/*`, `components/qiuye-ui/*`, `app/*`, `components/*` | `rg` 引用检查，记录保留/删除清单 | `docs/开发设计文档/20260628_nextjs_template_modernization/nextjs_template_modernization_implementation_records/YYYY-MM-DD_UI-01_component-audit.md` | 只审计和记录，不急着删除，避免破坏首页/Shell 工作 |
@@ -314,4 +314,3 @@ docs/开发设计文档/20260628_nextjs_template_modernization/nextjs_template_m
 ## 当前下一步建议
 
 建议下一个开发会话从 `DOC-01 README 与 AGENT 定位更新` 开始。原因是项目定位和 Agent 规则会约束后续所有代码变更，先把边界写清楚，可以减少后续实现跑偏。
-

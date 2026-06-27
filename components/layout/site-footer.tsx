@@ -1,0 +1,37 @@
+import { LeafIcon } from "lucide-react";
+
+import { siteConfig } from "@/config/site";
+
+export function SiteFooter() {
+  return (
+    <footer className="border-t bg-muted/30">
+      <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-4 py-8 sm:flex-row sm:justify-between sm:px-6">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <LeafIcon className="h-4 w-4" />
+          <span>
+            {siteConfig.name} &copy; {new Date().getFullYear()}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <a
+            href={siteConfig.links.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-foreground"
+          >
+            GitHub
+          </a>
+          <a
+            href={siteConfig.links.nextjs}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-foreground"
+          >
+            Next.js
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+}
