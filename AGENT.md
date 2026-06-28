@@ -6,7 +6,7 @@
 
 - 项目名称：Qiuye Next.js Template
 - 目标：作为创建任意新 Next.js 项目的初始化脚手架代码来源。
-- 核心技术栈：Next.js 15、React 19、TypeScript 5、Tailwind CSS 4、shadcn/ui、Radix UI、next-themes、lucide-react、Motion、pnpm。
+- 核心技术栈：Next.js 15、React 19、TypeScript 5、Tailwind CSS 4、shadcn/ui、Radix UI、next-themes、lucide-react、Motion、pnpm 8.7.0。
 - 默认能力：基础 App Router、主题系统、少量通用 UI、基础 Header/Footer、模板首页和 About 示例。
 
 ## 最高优先级规则
@@ -25,19 +25,14 @@
 app/                  Next.js App Router 页面和布局
 components/ui/        shadcn/ui 基础组件
 components/qiuye-ui/  通用 qiuye-ui 组件
-components/           当前阶段的通用布局和主题组件
+components/layout/    SiteHeader、SiteFooter 等通用布局
+components/providers/ AppProviders 等全局 Provider 组合
+components/           主题组件和兼容 re-export
+config/               siteConfig 等模板级配置
 hooks/                通用 React hooks
 lib/                  通用工具函数
 public/               静态资源
 docs/开发设计文档/    大功能设计、执行计划和实施记录
-```
-
-后续现代化工作完成后，推荐形成：
-
-```text
-components/layout/     SiteHeader、SiteFooter 等通用布局
-components/providers/  AppProviders 等全局 Provider 组合
-config/                siteConfig 等模板级配置
 ```
 
 不要在没有明确需求时创建 `content/`、`features/`、`server/`、`db/`、`scripts/` 等业务目录。

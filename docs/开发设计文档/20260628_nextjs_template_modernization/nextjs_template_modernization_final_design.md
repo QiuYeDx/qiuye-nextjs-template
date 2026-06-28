@@ -66,17 +66,19 @@
 
 - `app/layout.tsx`
   - 根布局。
-  - 注入 `ThemeProvider`、`Header`、`Footer`。
+  - 渲染 `AppProviders`、`SiteHeader`、`main`、`SiteFooter`。
   - 使用 Geist 字体。
-  - metadata 仍偏简单。
+  - metadata 从 `siteConfig` 派生。
 
 - `app/page.tsx`
-  - 当前是 Client Component。
-  - 展示模板技术栈、特性、项目结构和快速开始。
-  - 包含较多营销式卡片与动画。
+  - Client Component。
+  - 展示项目名、描述、快速开始命令、技术栈、基础组件示例和最少量链接。
+  - 覆盖 Button、Input、Dialog、Toast 等基础能力。
+  - 不包含博客、内容、AI、摄影、品牌官网等领域暗示。
 
 - `app/about/page.tsx`
-  - 基础 About 页面。
+  - 纯净 About 示例页。
+  - 只说明模板定位、保留能力和排除项。
 
 - `app/globals.css`
   - Tailwind 4 CSS-first 配置。
@@ -87,10 +89,20 @@
 ### 组件
 
 - `components/header.tsx`
-  - 简单导航。
+  - 兼容 re-export：`Header` 指向 `components/layout/site-header.tsx`。
 
 - `components/footer.tsx`
-  - 简单页脚。
+  - 兼容 re-export：`Footer` 指向 `components/layout/site-footer.tsx`。
+
+- `components/layout/site-header.tsx`
+  - 从 `siteConfig` 读取导航。
+  - 包含项目名和 `ThemeToggle`。
+
+- `components/layout/site-footer.tsx`
+  - 从 `siteConfig` 读取项目名和外链。
+
+- `components/providers/app-providers.tsx`
+  - 组合 `ThemeProvider` 和 `Toaster`。
 
 - `components/theme-provider.tsx`
   - next-themes provider。
@@ -99,19 +111,21 @@
   - 主题切换。
 
 - `components/qiuye-ui/dual-state-toggle.tsx`
-  - 通用双状态按钮，适合保留。
+  - 通用双状态按钮。
 
 - `components/ui/*`
-  - 当前包含较多 shadcn/ui 组件，其中一部分对纯模板偏重。
+  - 当前保留高频通用 shadcn/ui 组件：
+    `avatar`、`badge`、`button`、`card`、`dialog`、`drawer`、`dropdown-menu`、`input`、`label`、`popover`、`scroll-area`、`select`、`separator`、`sheet`、`skeleton`、`sonner`、`switch`、`tabs`、`textarea`、`tooltip`。
+  - `sidebar`、`table`、`pagination`、`navigation-menu`、`menubar`、`resizable` 等低频或场景型组件不默认预装。
 
 ### 依赖
 
-当前 `package.json` 中既有核心依赖，也有模板默认代码未必需要的通用库：
+当前依赖已按纯净模板收缩：
 
-- 可能保留：`next`、`react`、`react-dom`、`next-themes`、`lucide-react`、`motion`、Radix 基础组件、`class-variance-authority`、`clsx`、`tailwind-merge`、`sonner`、`vaul`。
-- 需要审计：`@heroicons/react`、`@react-spring/web`、`@reactuses/core`、`ahooks`、`dayjs`、`i18next`、`react-i18next`、`lodash`、`use-clipboard-copy`、`zustand`。
-
-审计原则：默认代码不用的依赖不应放在模板依赖里。它们可以写入 README 的“常用可选库推荐”。
+- 包管理器固定为 `pnpm@8.7.0`，`pnpm-lock.yaml` 保持 `lockfileVersion: '6.0'`。
+- 默认保留：`next`、`react`、`react-dom`、`next-themes`、`lucide-react`、`motion`、当前保留 UI 组件实际需要的 Radix 包、`class-variance-authority`、`clsx`、`tailwind-merge`、`sonner`、`vaul`。
+- 工具链保留：`typescript`、`tailwindcss`、`@tailwindcss/postcss`、`tw-animate-css`、`eslint`、`eslint-config-next`、`@eslint/eslintrc`、React/Node 类型包、`prettier`。
+- 已移除默认代码未使用的通用库和低频组件依赖，例如 `@heroicons/react`、`@react-spring/web`、`@reactuses/core`、`ahooks`、`dayjs`、`i18next`、`react-i18next`、`lodash`、`use-clipboard-copy`、`zustand`、`react-resizable-panels` 以及已删除组件对应的 Radix 包。
 
 ## 最终模板形态
 
@@ -340,9 +354,9 @@ export const siteConfig = {
 - `vaul`
 - 当前保留 UI 组件实际需要的 `@radix-ui/*`
 
-### 候选移除或改为可选推荐
+### 已移除或改为可选推荐
 
-如果默认代码不使用，应移出 dependencies：
+以下依赖不作为模板默认依赖；如果具体项目需要，应按需安装：
 
 - `@heroicons/react`
 - `@react-spring/web`
@@ -581,14 +595,13 @@ pnpm dev
 - 复杂动画、3D、Canvas 背景。
 - QiuVision 个人站品牌内容。
 
-## 下一步
+## 当前实施状态
 
-下一阶段应创建 `nextjs_template_modernization_execution_plan.md`，按纯净模板方向拆分工作包：
+现代化工作已按执行计划完成到 QA 阶段：
 
-- `DOC-01`：更新 README 和 AGENT 定位。
-- `SHELL-01`：整理 `config/site.ts`、layout、header、footer、providers。
-- `HOME-01`：首页纯净化。
-- `UI-01`：审计并收缩 shadcn/ui 与 qiuye-ui 组件基线。
-- `DEPS-01`：依赖瘦身和 lockfile 更新。
-- `QA-01`：lint/build/必要视觉检查。
+- 文档定位、App Shell、首页、About 示例页已完成纯净化。
+- shadcn/ui 与 qiuye-ui 组件已完成引用审计和低频组件收缩。
+- 依赖已完成审计和瘦身，lockfile 保持 pnpm 8.7.0 兼容格式。
+- QA 阶段负责最终验证、文档一致性检查和交接记录。
 
+后续如需处理 `next@15.5.7` 的安全更新提示，应单独创建 fix 包评估 Next 补丁版本兼容性，不混入纯净模板现代化主线。

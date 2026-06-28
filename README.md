@@ -26,7 +26,7 @@ The template deliberately avoids domain-specific features. Add Markdown, auth, d
 Requirements:
 
 - Node.js >= 20 recommended
-- pnpm >= 8 recommended
+- pnpm 8.7.0 recommended
 
 Install and run:
 
@@ -62,12 +62,19 @@ qiuye-nextjs-template/
 │   ├── layout.tsx
 │   └── page.tsx
 ├── components/
+│   ├── layout/
+│   │   ├── site-footer.tsx
+│   │   └── site-header.tsx
+│   ├── providers/
+│   │   └── app-providers.tsx
 │   ├── qiuye-ui/
 │   ├── ui/
 │   ├── header.tsx
 │   ├── footer.tsx
 │   ├── theme-provider.tsx
 │   └── theme-toggle.tsx
+├── config/
+│   └── site.ts
 ├── hooks/
 ├── lib/
 ├── public/
@@ -78,21 +85,7 @@ qiuye-nextjs-template/
 └── tsconfig.json
 ```
 
-Planned clean template structure:
-
-```text
-qiuye-nextjs-template/
-├── app/
-├── components/
-│   ├── layout/
-│   ├── providers/
-│   ├── qiuye-ui/
-│   └── ui/
-├── config/
-├── hooks/
-├── lib/
-└── public/
-```
+`components/header.tsx` and `components/footer.tsx` are compatibility re-exports for the layout components.
 
 ## Built-In UI
 
@@ -102,9 +95,36 @@ The template keeps only common UI primitives by default.
 
 `components/qiuye-ui/` is reserved for small generic qiuye-ui components. It should not contain business components, branded visual effects, or domain-specific widgets.
 
-Current custom qiuye-ui component:
+Current shadcn/ui components:
+
+```text
+avatar
+badge
+button
+card
+dialog
+drawer
+dropdown-menu
+input
+label
+popover
+scroll-area
+select
+separator
+sheet
+skeleton
+sonner
+switch
+tabs
+textarea
+tooltip
+```
+
+Current custom qiuye-ui components:
 
 - `dual-state-toggle`
+
+Low-frequency or scenario-specific shadcn/ui components such as `sidebar`, `table`, `pagination`, `navigation-menu`, `menubar`, and `resizable` are intentionally not bundled by default.
 
 ## Adding Components
 

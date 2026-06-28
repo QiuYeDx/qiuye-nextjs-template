@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
-  BookOpenIcon,
-  GithubIcon,
-  HeartIcon,
-  LeafIcon,
-  MailIcon,
+  BoxesIcon,
+  CheckCircle2Icon,
+  ExternalLinkIcon,
+  LayersIcon,
+  PackagePlusIcon,
 } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,161 +18,175 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "关于 - qiuye-nextjs-template",
-  description: "关于 qiuye-nextjs-template 项目模板",
+  title: "About",
+  description: `About ${siteConfig.name}`,
 };
+
+const includedItems = [
+  "Next.js App Router",
+  "React 19",
+  "TypeScript",
+  "Tailwind CSS 4",
+  "shadcn/ui primitives",
+  "Theme switching",
+  "Basic app shell",
+  "ESLint and Prettier",
+];
+
+const excludedItems = [
+  "Blog system",
+  "Markdown renderer",
+  "Authentication",
+  "Database",
+  "CMS",
+  "Uploads",
+  "Analytics",
+  "3D effects",
+];
+
+const usageSteps = [
+  "Clone the template into a new project folder.",
+  "Update site metadata, navigation, and package name.",
+  "Replace the starter pages with product screens.",
+  "Install domain packages only when the project needs them.",
+];
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-24">
-      {/* Title */}
-      <div className="mb-12 text-center">
-        <div className="mb-4 inline-flex items-center justify-center rounded-full bg-primary/10 p-3">
-          <LeafIcon className="h-6 w-6 text-primary" />
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-4 py-14 sm:px-6 sm:py-20">
+      <section className="space-y-5 text-center">
+        <Badge variant="secondary" className="mx-auto w-fit">
+          About this template
+        </Badge>
+        <div className="space-y-3">
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            A clean base for new Next.js projects
+          </h1>
+          <p className="mx-auto max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+            {siteConfig.name} keeps the repeatable setup work in one place while
+            leaving product-specific decisions to each new project.
+          </p>
         </div>
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          关于此模板
-        </h1>
-        <p className="mt-3 text-muted-foreground">
-          一个为高效开发而生的 Next.js 项目起点
-        </p>
-      </div>
+        <div className="flex flex-col justify-center gap-3 sm:flex-row">
+          <Button asChild>
+            <a
+              href={siteConfig.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+              <ExternalLinkIcon />
+            </a>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/">Back home</Link>
+          </Button>
+        </div>
+      </section>
 
-      {/* Intro */}
-      <section className="prose prose-neutral dark:prose-invert mx-auto mb-12 max-w-none">
+      <Separator />
+
+      <section className="grid gap-4 md:grid-cols-3">
+        {[
+          {
+            icon: LayersIcon,
+            title: "Starter shell",
+            description:
+              "A small layout, provider setup, theme toggle, and starter routes.",
+          },
+          {
+            icon: BoxesIcon,
+            title: "Common UI",
+            description:
+              "A focused set of shadcn/ui primitives that can grow on demand.",
+          },
+          {
+            icon: PackagePlusIcon,
+            title: "Bring your domain",
+            description:
+              "Add auth, data, charts, docs, or media only when the project asks.",
+          },
+        ].map((item) => (
+          <Card key={item.title}>
+            <CardHeader className="space-y-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                <item.icon className="h-4 w-4" />
+              </div>
+              <CardTitle className="text-base">{item.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="leading-6">
+                {item.description}
+              </CardDescription>
+            </CardContent>
+          </Card>
+        ))}
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>为什么创建这个模板？</CardTitle>
+            <CardTitle className="text-base">Included baseline</CardTitle>
+            <CardDescription>
+              The pieces expected in most new frontend projects.
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 text-muted-foreground leading-relaxed">
-            <p>
-              每次启动新项目时，我们总要花大量时间配置构建工具、安装 UI
-              组件库、设置主题系统、编写基础布局……这些重复性工作消耗了宝贵的开发时间。
-            </p>
-            <p>
-              <strong className="text-foreground">
-                qiuye-nextjs-template
-              </strong>{" "}
-              将这些最佳实践打包成一个开箱即用的模板：只需 clone
-              仓库，就能立即开始编写业务代码。
-            </p>
+          <CardContent className="flex flex-wrap gap-2">
+            {includedItems.map((item) => (
+              <Badge key={item} variant="outline">
+                {item}
+              </Badge>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Not included by default</CardTitle>
+            <CardDescription>
+              These belong in project-specific implementation work.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
+            {excludedItems.map((item) => (
+              <Badge key={item} variant="secondary">
+                {item}
+              </Badge>
+            ))}
           </CardContent>
         </Card>
       </section>
 
-      <Separator className="mb-12" />
-
-      {/* What's included */}
-      <section className="mb-12">
-        <h2 className="mb-6 text-xl font-semibold">模板包含什么？</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {[
-            {
-              title: "现代技术栈",
-              desc: "Next.js 15 + React 19 + TypeScript + Tailwind CSS 4",
-            },
-            {
-              title: "UI 组件库",
-              desc: "30+ 基于 Radix UI 的 shadcn/ui 组件，可按需扩展",
-            },
-            {
-              title: "主题系统",
-              desc: "亮色/暗色主题切换，支持系统主题跟随，带 View Transition 动画",
-            },
-            {
-              title: "开发工具",
-              desc: "ESLint + Prettier 预配置，路径别名 @/ 已配置",
-            },
-            {
-              title: "实用库",
-              desc: "Zustand 状态管理、dayjs、lodash、ahooks 等已预装",
-            },
-            {
-              title: "最佳实践",
-              desc: "App Router、Turbopack、严格 TypeScript 模式",
-            },
-          ].map((item) => (
-            <Card key={item.title} className="h-full">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">{item.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>{item.desc}</CardDescription>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <Separator className="mb-12" />
-
-      {/* How to use */}
-      <section className="mb-12">
-        <h2 className="mb-6 text-xl font-semibold">
-          <BookOpenIcon className="mr-2 inline-block h-5 w-5" />
-          如何使用
-        </h2>
-        <div className="space-y-4 text-muted-foreground leading-relaxed">
-          <div className="rounded-lg border bg-muted/40 p-4">
-            <ol className="list-inside list-decimal space-y-3">
-              <li>
-                <strong className="text-foreground">Clone 模板仓库</strong>
-                <code className="ml-2 rounded bg-muted px-2 py-0.5 font-mono text-xs">
-                  git clone https://github.com/qiuyedx/qiuye-nextjs-template.git
-                  my-app
-                </code>
-              </li>
-              <li>
-                <strong className="text-foreground">安装依赖</strong>
-                <code className="ml-2 rounded bg-muted px-2 py-0.5 font-mono text-xs">
-                  cd my-app &amp;&amp; pnpm install
-                </code>
-              </li>
-              <li>
-                <strong className="text-foreground">启动开发服务器</strong>
-                <code className="ml-2 rounded bg-muted px-2 py-0.5 font-mono text-xs">
-                  pnpm dev
-                </code>
-              </li>
-              <li>
-                <strong className="text-foreground">开始构建你的应用</strong>
-                <span className="ml-2 text-sm">
-                  修改 <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">app/page.tsx</code> 和其他文件
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">How to use it</CardTitle>
+          <CardDescription>
+            Treat this repository as a base layer, then let each project define
+            its own product shape.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ol className="grid gap-3 sm:grid-cols-2">
+            {usageSteps.map((step, index) => (
+              <li
+                key={step}
+                className="flex gap-3 rounded-md border bg-muted/30 p-3 text-sm leading-6"
+              >
+                <CheckCircle2Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <span>
+                  <span className="font-medium text-foreground">
+                    {index + 1}.
+                  </span>{" "}
+                  {step}
                 </span>
               </li>
-            </ol>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="rounded-2xl border bg-muted/30 p-8 text-center">
-        <HeartIcon className="mx-auto mb-3 h-6 w-6 text-red-500" />
-        <h3 className="mb-2 text-lg font-semibold">喜欢这个模板？</h3>
-        <p className="mb-6 text-sm text-muted-foreground">
-          欢迎在 GitHub 上 Star 支持，或提出 Issue 和 PR
-        </p>
-        <div className="flex items-center justify-center gap-3">
-          <Button asChild>
-            <a
-              href="https://github.com/qiuyedx/qiuye-nextjs-template"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <GithubIcon className="mr-2 h-4 w-4" />
-              GitHub
-            </a>
-          </Button>
-          <Button variant="outline" asChild>
-            <a href="mailto:qiuye@qiuyedx.com">
-              <MailIcon className="mr-2 h-4 w-4" />
-              联系作者
-            </a>
-          </Button>
-        </div>
-      </section>
+            ))}
+          </ol>
+        </CardContent>
+      </Card>
     </div>
   );
 }
