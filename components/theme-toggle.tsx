@@ -12,13 +12,13 @@ interface ThemeToggleProps {
 }
 
 export function ThemeToggle({ duration = 400 }: ThemeToggleProps) {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const isDark = resolvedTheme === "dark";
 
   const toggleTheme = React.useCallback(async () => {
-    // 确定新主题：如果当前是 dark 则切换到 light，否则切换到 dark
-    // 如果 theme 未定义（首次加载），默认切换到 dark
-    const newTheme = theme === "dark" ? "light" : "dark";
+    // 基于实际解析后的主题切换，避免 system + dark 时按钮状态滞后。
+    const newTheme = isDark ? "light" : "dark";
 
     if (!buttonRef.current) {
       setTheme(newTheme);
@@ -65,12 +65,12 @@ export function ThemeToggle({ duration = 400 }: ThemeToggleProps) {
         pseudoElement: "::view-transition-new(root)",
       }
     );
-  }, [theme, setTheme, duration]);
+  }, [isDark, setTheme, duration]);
 
   return (
     <DualStateToggle
       ref={buttonRef}
-      active={theme === "dark"}
+      active={isDark}
       onToggle={() => toggleTheme()}
       activeIcon={<MoonIcon />}
       inactiveIcon={<SunIcon />}
