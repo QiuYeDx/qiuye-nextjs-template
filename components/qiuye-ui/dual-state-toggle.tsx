@@ -13,7 +13,12 @@ import { cn } from "@/lib/utils";
 type ButtonProps = React.ComponentProps<typeof Button>;
 
 /** 内置过渡效果预设名 */
-type ToggleEffectPreset = "fade" | "rotate" | "slide-up" | "slide-down" | "scale";
+type ToggleEffectPreset =
+  | "fade"
+  | "rotate"
+  | "slide-up"
+  | "slide-down"
+  | "scale";
 
 type MotionValues = Record<string, string | number>;
 
@@ -71,8 +76,10 @@ const EFFECT_PRESETS: Record<ToggleEffectPreset, ToggleEffectConfig> = {
 /*                                   Props                                    */
 /* -------------------------------------------------------------------------- */
 
-export interface DualStateToggleProps
-  extends Omit<ButtonProps, "onClick" | "onToggle" | "children"> {
+export interface DualStateToggleProps extends Omit<
+  ButtonProps,
+  "onToggle" | "children"
+> {
   /** 是否处于激活状态 */
   active: boolean;
   /** 状态切换回调 */
@@ -95,7 +102,8 @@ export interface DualStateToggleProps
    * - `"square"` — 默认圆角矩形（shadcn/ui Button 原始圆角）
    * - `"circle"` — 纯圆形按钮（`rounded-full`）
    *
-   * 也可以忽略此属性，通过 `className` 自定义圆角
+   * 圆形模式会覆盖 Button 自身的圆角与 `corner-shape` 样式。
+   * 也可以忽略此属性，通过 `className` 或 `style` 自定义圆角。
    * @default "square"
    */
   shape?: "square" | "circle";
@@ -113,6 +121,22 @@ export interface DualStateToggleProps
    * 会与基础的 opacity + blur 动画合并。
    *
    * @default "fade"
+   *
+   * @example
+   * ```tsx
+   * // 使用预设
+   * <DualStateToggle effect="rotate" ... />
+   *
+   * // 自定义效果
+   * <DualStateToggle
+   *   effect={{
+   *     initial: { rotate: -180, scale: 0.6 },
+   *     animate: { rotate: 0, scale: 1 },
+   *     exit:    { rotate: 180, scale: 0.6 },
+   *   }}
+   *   ...
+   * />
+   * ```
    */
   effect?: ToggleEffect;
   /**
@@ -126,23 +150,96 @@ export interface DualStateToggleProps
 /*                                 Component                                  */
 /* -------------------------------------------------------------------------- */
 
-export function DualStateToggle({
-  active,
-  onToggle,
-  activeIcon,
-  inactiveIcon,
-  activeLabel,
-  inactiveLabel,
-  blurAmount = "2px",
-  shape = "square",
-  effect = "fade",
-  transitionDuration = 0.25,
-  // shadcn/ui Button props — 提供最常用的默认值，外部可覆盖
-  variant = "default",
-  size = "icon",
-  className,
-  ...buttonProps
-}: DualStateToggleProps) {
+/**
+ * DualStateToggle — 标准双状态切换按钮
+ *
+ * 基于 shadcn/ui Button，内置点击缩放 + 图标切换动画。
+ * 默认 `variant="default"` + `size="icon"`，可通过 props 覆盖。
+ *
+ * ## 按钮尺寸 & 图标尺寸
+ *
+ * 按钮尺寸遵循 shadcn/ui Button 规范：
+ * - `size="icon"`（默认）→ 36px 方形，icon 自动 size-4（16px）
+ * - `size="icon-xs"` → 24px 方形，icon 自动 size-3（12px）
+ * - `size="icon-sm"` → 32px 方形，icon 自动 size-4（16px）
+ * - `size="icon-lg"` → 40px 方形，icon 自动 size-4（16px）
+ *
+ * Icon 尺寸由 Button 通过 `[&_svg:not([class*='size-'])]:size-4` 自动控制，
+ * **不需要**在 icon 上手动添加 `h-* w-*`。若需自定义尺寸，使用 `size-*`
+ * 类名（如 `size-5`），Button 会自动跳过自动尺寸控制。
+ *
+ * @example
+ * ```tsx
+ * // 基本用法 — 默认 fade 效果（icon 自动 16px）
+ * <DualStateToggle
+ *   active={isOpen}
+ *   onToggle={setIsOpen}
+ *   activeIcon={<XIcon />}
+ *   inactiveIcon={<MenuIcon />}
+ *   activeLabel="关闭"
+ *   inactiveLabel="打开"
+ * />
+ *
+ * // 旋转效果 + 圆形按钮
+ * <DualStateToggle
+ *   active={isOpen}
+ *   onToggle={setIsOpen}
+ *   activeIcon={<XIcon />}
+ *   inactiveIcon={<MenuIcon />}
+ *   effect="rotate"
+ *   shape="circle"
+ * />
+ *
+ * // 自定义 icon 尺寸 — 使用 size-* 前缀
+ * <DualStateToggle
+ *   active={isOpen}
+ *   onToggle={setIsOpen}
+ *   activeIcon={<XIcon className="size-5" />}
+ *   inactiveIcon={<MenuIcon className="size-5" />}
+ *   size="icon-lg"
+ * />
+ *
+ * // 自定义效果 + 透传 Button props
+ * <DualStateToggle
+ *   active={isMuted}
+ *   onToggle={setIsMuted}
+ *   activeIcon={<VolumeOffIcon />}
+ *   inactiveIcon={<Volume2Icon />}
+ *   variant="outline"
+ *   blurAmount="4px"
+ *   effect={{
+ *     initial: { rotate: -180, scale: 0.6 },
+ *     animate: { rotate: 0, scale: 1 },
+ *     exit:    { rotate: 180, scale: 0.6 },
+ *   }}
+ * />
+ * ```
+ */
+export const DualStateToggle = React.forwardRef<
+  HTMLButtonElement,
+  DualStateToggleProps
+>(function DualStateToggle(
+  {
+    active,
+    onToggle,
+    activeIcon,
+    inactiveIcon,
+    activeLabel,
+    inactiveLabel,
+    blurAmount = "2px",
+    shape = "square",
+    effect = "fade",
+    transitionDuration = 0.25,
+    // shadcn/ui Button props — 提供最常用的默认值，外部可覆盖
+    variant = "default",
+    size = "icon",
+    className,
+    style,
+    onClick,
+    ...buttonProps
+  },
+  ref,
+) {
   // 解析过渡效果（预设 or 自定义）
   const resolvedEffect: ToggleEffectConfig =
     typeof effect === "string" ? EFFECT_PRESETS[effect] : effect;
@@ -160,14 +257,28 @@ export function DualStateToggle({
 
   return (
     <Button
+      ref={ref}
       variant={variant}
       size={size}
       className={cn(
-        "transition-transform duration-150 active:scale-[0.97] cursor-pointer",
+        "relative transition-transform duration-150 active:scale-[0.97] cursor-pointer",
         shape === "circle" && "rounded-full",
-        className
+        className,
       )}
-      onClick={() => onToggle(!active)}
+      style={
+        shape === "circle"
+          ? ({
+              ...style,
+              borderRadius: "9999px",
+              cornerShape: "round",
+            } as React.CSSProperties)
+          : style
+      }
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        onToggle(!active);
+      }}
       {...buttonProps}
     >
       <AnimatePresence mode="popLayout" initial={false}>
@@ -197,10 +308,8 @@ export function DualStateToggle({
       </AnimatePresence>
 
       {(activeLabel || inactiveLabel) && (
-        <span className="sr-only">
-          {active ? activeLabel : inactiveLabel}
-        </span>
+        <span className="sr-only">{active ? activeLabel : inactiveLabel}</span>
       )}
     </Button>
   );
-}
+});
