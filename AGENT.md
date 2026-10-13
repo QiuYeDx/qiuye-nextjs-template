@@ -40,6 +40,8 @@ docs/开发设计文档/    大功能设计、执行计划和实施记录
 ## 组件规则
 
 - shadcn/ui 组件保持原子、可替换、无业务语义。
+- shadcn/ui 使用 `radix-nova` 风格，通过 `pnpm dlx shadcn@latest add <name>` 安装；CLI 生成的 `from "cn"` 要改回 `@/lib/utils`，不要引入 `cn` 包和 `@radix-ui/react-*` 分包。
+- nova 默认值与旧版不同：Card 自带 `overflow-hidden` 和 `--card-spacing` 内边距，不要再写旧版的 `p-6` 覆盖；Badge 固定 `h-5`；Popover 内容是 `flex flex-col gap-2.5`、Tooltip 内容是 `inline-flex`；DropdownMenuContent 宽度等于触发器，图标按钮触发的菜单应去掉；SelectTrigger、TabsList 等用 `data-[size=sm]:*`、`group-data-horizontal/*` 变体设置尺寸，覆盖时要写同一变体。
 - 自研组件不要放入 `components/ui/`。
 - 页面级业务组合优先放到对应业务目录；本模板默认不应新增业务组合。
 - 图标优先使用 `lucide-react`。
@@ -67,7 +69,7 @@ docs/开发设计文档/    大功能设计、执行计划和实施记录
 
 - Next.js / React / TypeScript
 - Tailwind CSS / PostCSS
-- shadcn/ui 所需 Radix 包
+- `radix-ui`（shadcn/ui 所需的 Radix 单包）与 `shadcn`（`globals.css` 引入 `shadcn/tailwind.css`）
 - `next-themes`
 - `lucide-react`
 - `motion`
